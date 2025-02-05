@@ -1,36 +1,24 @@
+import { Hex, mineHex, coalPlantHex } from "./classes.js";
+
+
 const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
+export const ctx = canvas.getContext('2d');
 
 const angle = 2 * Math.PI / 6;
 let radius = 50;
-
-let Btn = document.querySelector("button")
-let inputX = document.querySelector("#X")
-let inputY = document.querySelector("#Y")
 
 let zoomInBtn = document.querySelector("#zoomIn")
 let zoomOutBtn = document.querySelector("#zoomOut")
 
 //game variables
 let materials = 0
-let buildings = 5
+let buildingCount = 5
 
 zoomOutBtn.addEventListener("click", ()=>{
     zoomMap(5, -1)
 })
 zoomInBtn.addEventListener("click", ()=> {
     zoomMap(5, 1)
-})
-
-Btn.addEventListener("click", ()=> {
-    if (map[inputX.value][inputY.value] === null) {
-        map[inputX.value][inputY.value] = new Hex(inputX.value, inputY.value); 
-        map[inputX.value][inputY.value].draw()
-    }
-    else {
-        console.log("hex already exists")
-    }
-
 })
 
 canvas.addEventListener("click", (event) => {
@@ -43,14 +31,22 @@ canvas.addEventListener("click", (event) => {
     let hex = map[col][row]
     if(hex.type == "empty") {
         fillHexagon(col, row)
-        createBuilding(col, row, "mine", "material")
+        createBuilding(col, row)
     } else {
         console.error("building already exists")
     }
 });
 
+export const resource = new Object()
+resource["material"] = 0;
+resource["energy"] = 0;
+console.log(resource)
 
-const buildingTypes = [{type:"mine", resource:"material"}]
+const buildingTypes = [mineHex, coalPlantHex
+];
+
+console.log(buildingTypes)
+
 
 const ODD_Q_DIRECTIONS = [
     [+1, +1], [+1,  0], [ 0, -1], 
@@ -63,35 +59,9 @@ const EVEN_Q_DIRECTIONS = [
 ];
 
 
-
-class Hex {
-    constructor(q, r, type = "empty", resource = "") {
-        this.q = q
-        this.r = r
-        this.type = type
-        this.resource = resource
-        this.power = 1 //how many resources generated per time
-    }
-    getNeighbors() {
-        let col = this.q
-        let row = this.r
-        let directions = (col % 2 === 0) ? EVEN_Q_DIRECTIONS : ODD_Q_DIRECTIONS;
-        return directions.map(([dc, dr]) => ({ col: col + dc, row: row + dr }));
-
-    }
-
-    draw(){
-        ctx.fillstyle = "black"
-        drawHexagon(this.q, this.r, this.type)
-    }
-
-    generateResource() {
-        //generates this.resource according to some algorithm, using getneighbors to get stat boosts.
-    }
-}
-
 const mapSize = 10;
 const map = [];
+const buildings = [];
 
 // Nested loops to create the 2D array
 for (let y = 0; y < mapSize; y++) {
@@ -124,7 +94,7 @@ function pixelToOffset(x, y, size) {
     return { col, row };
 }
 
-function drawHexagon(col, row, text = "") {
+export function drawHexagon(col, row, text = "") {
     const { x, y } = offsetToPixel(col, row, radius);
     
     ctx.beginPath();
@@ -146,13 +116,13 @@ function drawHexagon(col, row, text = "") {
 
 
 function createBuilding(col, row, type = "test", resource = "") {
-    buildings--
+    buildingCount--
     let hex = map[col][row]
-    hex.resource = resource
-    hex.type = type
-    console.log(hex)
-    drawHexagon(col, row, type)
+    hex = new buildingTypes[0](col, row)
+    buildings.push(hex)
+
     hex.draw()
+    console.log(buildings)
 }
 function fillHexagon(col, row){
     const { x, y } = offsetToPixel(col, row, radius);
@@ -174,7 +144,6 @@ function fillHexagon(col, row){
 }
 function zoomMap(zoomMult, inOut){
     zoomMult *= inOut
-    console.log(zoomMult)
     radius += zoomMult
     ctx.clearRect(0, 0, 800, 500)
     init()
@@ -193,6 +162,9 @@ init()
 
 function gameTick() {
     console.log('Game tick executed');
+    buildings.forEach(building => {
+        building.generateResource()
+    });
 }
 
 setInterval(gameTick, 2000);
