@@ -14,6 +14,17 @@ let zoomOutBtn = document.querySelector("#zoomOut")
 let materials = 0
 let buildingCount = 5
 
+let carouselPlusBtn = document.querySelector("#carouselPlus")
+let carouselMinusBtn = document.querySelector("#carouselMinus")
+let carouselTxt = document.querySelector("#currentBuilding")
+
+let materialUI = document.querySelector("#material")
+let energy = document.querySelector("#energy")
+
+carouselMinusBtn.addEventListener("click", (e)=> {})
+
+carouselPlusBtn.addEventListener("click", (e)=> {})
+
 zoomOutBtn.addEventListener("click", ()=>{
     zoomMap(5, -1)
 })
@@ -27,12 +38,15 @@ canvas.addEventListener("click", (event) => {
     let mouseY = event.clientY - rect.top;
 
     const { col, row } = pixelToOffset(mouseX, mouseY, radius);
-    console.log(`Clicked on hex: Column ${col}, Row ${row}`);
+    //console.log(`Clicked on hex: Column ${col}, Row ${row}`);
+
     let hex = map[col][row]
     if(hex.type == "empty") {
+        console.log(hex)
         fillHexagon(col, row)
         createBuilding(col, row)
     } else {
+        console.log(hex)
         console.error("building already exists")
     }
 });
@@ -119,6 +133,7 @@ function createBuilding(col, row, type = "test", resource = "") {
     buildingCount--
     let hex = map[col][row]
     hex = new buildingTypes[0](col, row)
+    map[col][row] = hex
     buildings.push(hex)
 
     hex.draw()
@@ -167,4 +182,4 @@ function gameTick() {
     });
 }
 
-setInterval(gameTick, 2000);
+// setInterval(gameTick, 2000);

@@ -20,12 +20,6 @@ export class Hex {
         ctx.fillstyle = "black"
         drawHexagon(this.q, this.r, this.type)
     }
-
-    generateResource() {
-        resource[this.resource]++
-        console.log(`type: ${this.type} resource counter: ${resource[this.resource]}`)
-        //generates this.resource according to some algorithm, using getneighbors to get stat boosts.
-    }
 }
 
 export class mineHex extends Hex {
@@ -34,6 +28,11 @@ export class mineHex extends Hex {
         this.type = "mine"
         this.resource = "material"
     }
+    generateResource() {
+        if(resource["energy"] >= 2)
+        resource[this.resource]++
+        console.log(`type: ${this.type} resource counter: ${resource[this.resource]}`)
+    }
 }
 
 export class coalPlantHex extends Hex {
@@ -41,6 +40,11 @@ export class coalPlantHex extends Hex {
         super(q, r)
         this.type = "coalPlant"
         this.resource = "energy"
+    }
+
+    generateResource() {
+        resource[this.resource]++
+        console.log(`type: ${this.type} resource counter: ${resource[this.resource]}`)
     }
     
 }
