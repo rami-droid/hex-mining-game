@@ -11,19 +11,20 @@ let zoomInBtn = document.querySelector("#zoomIn")
 let zoomOutBtn = document.querySelector("#zoomOut")
 
 //game variables
-let materials = 0
 let buildingCount = 5
+
+let currBuilding = 0
 
 let carouselPlusBtn = document.querySelector("#carouselPlus")
 let carouselMinusBtn = document.querySelector("#carouselMinus")
 let carouselTxt = document.querySelector("#currentBuilding")
 
 let materialUI = document.querySelector("#material")
-let energy = document.querySelector("#energy")
+let energyUI = document.querySelector("#energy")
 
-carouselMinusBtn.addEventListener("click", (e)=> {})
+carouselMinusBtn.addEventListener("click", (e)=> {updateCarousel("prev")})
 
-carouselPlusBtn.addEventListener("click", (e)=> {})
+carouselPlusBtn.addEventListener("click", (e)=> {updateCarousel("next")})
 
 zoomOutBtn.addEventListener("click", ()=>{
     zoomMap(5, -1)
@@ -56,8 +57,7 @@ resource["material"] = 0;
 resource["energy"] = 0;
 console.log(resource)
 
-const buildingTypes = [mineHex, coalPlantHex
-];
+const buildingTypes = [mineHex, coalPlantHex];
 
 console.log(buildingTypes)
 
@@ -86,6 +86,23 @@ for (let y = 0; y < mapSize; y++) {
     map.push(row); // Push the row into the map
 }
 
+
+function updateCarousel(direction) {
+    
+    if (direction === "next") {
+        currBuilding = (currBuilding + 1) % buildingTypes.length; // Move forward and loop back to 0
+    } else if (direction === "prev") {
+        currBuilding = (currBuilding - 1 + buildingTypes.length) % buildingTypes.length; // Move backward and loop to the end
+    }
+    let displayObj = new buildingTypes[currBuilding]
+    console.log(buildingTypes[currBuilding])
+    carouselTxt.innerText = `current building: ${displayObj.type}`
+}
+function updateResources() {
+    materialUI.innerText = `material: ${resource["material"]}`
+    energyUI.innerText = `energy: ${resource["energy"]}`
+    
+}
 
 function offsetToPixel(col, row, size) {
     let x = 3/2 * size * col;
@@ -117,7 +134,7 @@ export function drawHexagon(col, row, text = "") {
     ctx.textAlign = "center";
     
     ctx.font = `${20 * (radius/50)}px Arial`;
-    ctx.fillText(`${col}, ${row}: ${text}`, x, y);
+    ctx.fillText(`${text}`, x, y);
     for (let i = 0; i < 6; i++) {
         ctx.lineTo(x + radius * Math.cos(angle * i), y + radius * Math.sin(angle * i));
     }
@@ -132,7 +149,7 @@ export function drawHexagon(col, row, text = "") {
 function createBuilding(col, row, type = "test", resource = "") {
     buildingCount--
     let hex = map[col][row]
-    hex = new buildingTypes[0](col, row)
+    hex = new buildingTypes[currBuilding](col, row)
     map[col][row] = hex
     buildings.push(hex)
 
@@ -180,6 +197,7 @@ function gameTick() {
     buildings.forEach(building => {
         building.generateResource()
     });
+    updateResources()
 }
 
-// setInterval(gameTick, 2000);
+setInterval(gameTick, 2000);

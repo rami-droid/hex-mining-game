@@ -29,9 +29,9 @@ export class mineHex extends Hex {
         this.resource = "material"
     }
     generateResource() {
-        if(resource["energy"] >= 2)
-        resource[this.resource]++
-        console.log(`type: ${this.type} resource counter: ${resource[this.resource]}`)
+        if(resource["energy"] > 0)
+        resource[this.resource] += 2
+        resource["energy"]--
     }
 }
 
@@ -43,8 +43,7 @@ export class coalPlantHex extends Hex {
     }
 
     generateResource() {
-        resource[this.resource]++
-        console.log(`type: ${this.type} resource counter: ${resource[this.resource]}`)
+        resource[this.resource] +=2
     }
     
 }
