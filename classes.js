@@ -27,11 +27,13 @@ export class mineHex extends Hex {
         super(q, r)
         this.type = "mine"
         this.resource = "material"
+        this.materialCost = 10
+        this.energyCost = 0
     }
     generateResource() {
         if(resource["energy"] > 0)
         resource[this.resource] += 2
-        resource["energy"]--
+        resource["energy"]--    
     }
 }
 
@@ -40,10 +42,24 @@ export class coalPlantHex extends Hex {
         super(q, r)
         this.type = "coalPlant"
         this.resource = "energy"
+        this.materialCost = 15
+        this.energyCost = 5
     }
 
     generateResource() {
         resource[this.resource] +=2
     }
     
+}
+
+export class steelMillHex extends Hex {
+    constructor(q, r){
+        super(q, r)
+    }
+}
+
+export class warehouseHex extends Hex {
+    constructor(q, r){
+        super(q, r)
+    }
 }

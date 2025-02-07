@@ -22,7 +22,7 @@ A city-building and resource-management game where players strategically place b
 
 ## **Roadmap**
 
-### **Phase 1**: Minimum Viable Product (MVP)
+~~ ### **Phase 1**: Minimum Viable Product (MVP)~~ **COMPLETE**
 - Implement hexagonal grid with building placement functionality.
 - Add basic resource generation and tracking via the UI.
 - Enable zoom and pan for better map navigation.

@@ -1,4 +1,4 @@
-import { Hex, mineHex, coalPlantHex } from "./classes.js";
+import { Hex, mineHex, coalPlantHex, steelMillHex, warehouseHex } from "./classes.js";
 
 
 const canvas = document.getElementById('canvas');
@@ -44,7 +44,6 @@ canvas.addEventListener("click", (event) => {
     let hex = map[col][row]
     if(hex.type == "empty") {
         console.log(hex)
-        fillHexagon(col, row)
         createBuilding(col, row)
     } else {
         console.log(hex)
@@ -53,8 +52,9 @@ canvas.addEventListener("click", (event) => {
 });
 
 export const resource = new Object()
-resource["material"] = 0;
-resource["energy"] = 0;
+resource["material"] = 25;
+resource["energy"] = 5;
+resource["steel"] = 0;
 console.log(resource)
 
 const buildingTypes = [mineHex, coalPlantHex];
@@ -95,8 +95,7 @@ function updateCarousel(direction) {
         currBuilding = (currBuilding - 1 + buildingTypes.length) % buildingTypes.length; // Move backward and loop to the end
     }
     let displayObj = new buildingTypes[currBuilding]
-    console.log(buildingTypes[currBuilding])
-    carouselTxt.innerText = `current building: ${displayObj.type}`
+    carouselTxt.innerHTML = `<p>current building: ${displayObj.type} <br>cost: ${displayObj.materialCost} material, ${displayObj.energyCost} energy</p>`
 }
 function updateResources() {
     materialUI.innerText = `material: ${resource["material"]}`
@@ -146,15 +145,22 @@ export function drawHexagon(col, row, text = "") {
 }
 
 
-function createBuilding(col, row, type = "test", resource = "") {
-    buildingCount--
+function createBuilding(col, row) {
     let hex = map[col][row]
     hex = new buildingTypes[currBuilding](col, row)
-    map[col][row] = hex
-    buildings.push(hex)
-
-    hex.draw()
-    console.log(buildings)
+    console.log(`${hex.materialCost}, ${hex.energyCost}`)
+    if(resource["material"] >= hex.materialCost && resource["energy"] >= hex.energyCost){
+        map[col][row] = hex
+        buildings.push(hex)
+        resource["energy"] -= hex.energyCost 
+        resource["material"] -= hex.materialCost 
+        fillHexagon(col, row)
+        hex.draw()
+        console.log(buildings)
+        updateResources()
+    } else {
+        console.error("not enough resources")
+    }
 }
 function fillHexagon(col, row){
     const { x, y } = offsetToPixel(col, row, radius);
